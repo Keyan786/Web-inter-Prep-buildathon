@@ -1,0 +1,368 @@
+{% extends "layout.html" %}
+
+{% block title %}AI Resume Builder{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/resume_builder.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="builder-header mb-4">
+                <h1 class="display-5"><i class="fas fa-robot me-3"></i>AI Resume Builder with ATS Checker</h1>
+                <p class="lead">Create an ATS-optimized resume with AI-powered suggestions</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Content Area -->
+        <div class="col-lg-7">
+            <!-- Tab Navigation -->
+            <ul class="nav nav-pills mb-4" id="resumeTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="personal-tab" data-bs-toggle="pill" data-bs-target="#personal"
+                        type="button">
+                        <i class="fas fa-user me-2"></i>Personal
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="summary-tab" data-bs-toggle="pill" data-bs-target="#summary"
+                        type="button">
+                        <i class="fas fa-file-alt me-2"></i>Summary
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="experience-tab" data-bs-toggle="pill" data-bs-target="#experience"
+                        type="button">
+                        <i class="fas fa-briefcase me-2"></i>Experience
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="education-tab" data-bs-toggle="pill" data-bs-target="#education"
+                        type="button">
+                        <i class="fas fa-graduation-cap me-2"></i>Education
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="skills-tab" data-bs-toggle="pill" data-bs-target="#skills"
+                        type="button">
+                        <i class="fas fa-code me-2"></i>Skills
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="ats-tab" data-bs-toggle="pill" data-bs-target="#ats" type="button">
+                        <i class="fas fa-check-circle me-2"></i>ATS Checker
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="resumeTabContent">
+                <!-- Personal Information Tab -->
+                <div class="tab-pane fade show active" id="personal" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4">Personal Information</h4>
+                            <form id="personalForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Full Name *</label>
+                                        <input type="text" class="form-control" id="fullName" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email *</label>
+                                        <input type="email" class="form-control" id="email" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Phone</label>
+                                        <input type="tel" class="form-control" id="phone">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Location</label>
+                                        <input type="text" class="form-control" id="location"
+                                            placeholder="City, Country">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">LinkedIn</label>
+                                        <input type="url" class="form-control" id="linkedin"
+                                            placeholder="https://linkedin.com/in/yourprofile">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Portfolio/Website</label>
+                                        <input type="url" class="form-control" id="website">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Summary Tab -->
+                <div class="tab-pane fade" id="summary" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="card-title mb-0">Professional Summary</h4>
+                                <button class="btn btn-primary btn-sm" id="generateSummary">
+                                    <i class="fas fa-magic me-2"></i>Generate with AI
+                                </button>
+                            </div>
+
+                            <!-- AI Generation Inputs -->
+                            <div id="aiSummaryInputs" class="alert alert-info" style="display:none;">
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <input type="text" class="form-control" id="targetRole"
+                                            placeholder="Target Job Role">
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <input type="number" class="form-control" id="yearsExp"
+                                            placeholder="Years of Exp">
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <input type="text" class="form-control" id="industry" placeholder="Industry">
+                                    </div>
+                                </div>
+                                <button class="btn btn-success btn-sm mt-2" id="generateSummarySubmit">
+                                    <i class="fas fa-wand-magic-sparkles me-2"></i>Generate
+                                </button>
+                            </div>
+
+                            <textarea class="form-control" id="professionalSummary" rows="6"
+                                placeholder="Write a brief professional summary highlighting your key skills and experience..."></textarea>
+                            <small class="text-muted">Tip: Keep it concise (3-4 sentences) and focus on your unique
+                                value proposition</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Work Experience Tab -->
+                <div class="tab-pane fade" id="experience" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="card-title mb-0">Work Experience</h4>
+                                <button class="btn btn-primary btn-sm" id="addExperience">
+                                    <i class="fas fa-plus me-2"></i>Add Experience
+                                </button>
+                            </div>
+                            <div id="experienceContainer">
+                                <!-- Experience entries will be added here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education Tab -->
+                <div class="tab-pane fade" id="education" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="card-title mb-0">Education</h4>
+                                <button class="btn btn-primary btn-sm" id="addEducation">
+                                    <i class="fas fa-plus me-2"></i>Add Education
+                                </button>
+                            </div>
+                            <div id="educationContainer">
+                                <!-- Education entries will be added here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills Tab -->
+                <div class="tab-pane fade" id="skills" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4">Skills</h4>
+                            <div class="mb-3">
+                                <label class="form-label">Technical Skills</label>
+                                <input type="text" class="form-control mb-2" id="skillInput"
+                                    placeholder="Enter a skill and press Enter">
+                                <div id="skillsContainer" class="d-flex flex-wrap gap-2">
+                                    <!-- Skills badges will appear here -->
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="mb-3">
+                                <label class="form-label">Soft Skills</label>
+                                <input type="text" class="form-control mb-2" id="softSkillInput"
+                                    placeholder="Enter a soft skill and press Enter">
+                                <div id="softSkillsContainer" class="d-flex flex-wrap gap-2">
+                                    <!-- Soft skills badges will appear here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATS Checker Tab -->
+                <div class="tab-pane fade" id="ats" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4">ATS Score Checker</h4>
+                            <p class="text-muted">Upload your existing resume to check its ATS compatibility score</p>
+
+                            <div class="upload-area mb-4">
+                                <input type="file" id="atsFileInput" accept=".pdf,.txt" class="d-none">
+                                <div class="upload-box" id="uploadBox">
+                                    <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-primary"></i>
+                                    <p class="mb-2">Click to upload or drag and drop</p>
+                                    <small class="text-muted">PDF or TXT files only</small>
+                                </div>
+                            </div>
+
+                            <div id="atsResults" style="display:none;">
+                                <h5 class="mb-3">ATS Analysis Results</h5>
+                                <div class="ats-score-card mb-4">
+                                    <div class="score-circle">
+                                        <span id="overallScore">0</span>
+                                        <small>/100</small>
+                                    </div>
+                                    <div>
+                                        <h6>Overall ATS Score</h6>
+                                        <p class="text-muted mb-0">Your resume's compatibility with ATS systems</p>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="score-item">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Keyword Optimization</span>
+                                                <span id="keywordScore">0%</span>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar" id="keywordBar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="score-item">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Format Compatibility</span>
+                                                <span id="formatScore">0%</span>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar" id="formatBar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="score-item">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Section Completeness</span>
+                                                <span id="sectionScore">0%</span>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar" id="sectionBar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="score-item">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Contact Information</span>
+                                                <span id="contactScore">0%</span>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar" id="contactBar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="suggestions-box">
+                                    <h6 class="mb-3">Improvement Suggestions</h6>
+                                    <ul id="suggestionsList" class="list-unstyled">
+                                        <!-- Suggestions will be added here -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons mt-4">
+                <button class="btn btn-success btn-lg" id="saveResume">
+                    <i class="fas fa-save me-2"></i>Save Resume
+                </button>
+                <button class="btn btn-primary btn-lg" id="downloadPDF">
+                    <i class="fas fa-download me-2"></i>Download PDF
+                </button>
+            </div>
+        </div>
+
+        <!-- Preview Panel -->
+        <div class="col-lg-5">
+            <div class="preview-panel sticky-top">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-eye me-2"></i>Live Preview</h5>
+                    </div>
+                    <div class="card-body p-4" id="resumePreview">
+                        <div class="preview-content">
+                            <div class="preview-header text-center mb-4">
+                                <h3 id="preview-name">Your Name</h3>
+                                <div id="preview-contact" class="text-muted small">
+                                    <span id="preview-email"></span>
+                                    <span id="preview-phone"></span>
+                                    <span id="preview-location"></span>
+                                </div>
+                            </div>
+
+                            <div id="preview-summary" class="preview-section mb-4" style="display:none;">
+                                <h6 class="section-title">PROFESSIONAL SUMMARY</h6>
+                                <p id="preview-summary-text"></p>
+                            </div>
+
+                            <div id="preview-experience" class="preview-section mb-4" style="display:none;">
+                                <h6 class="section-title">WORK EXPERIENCE</h6>
+                                <div id="preview-experience-list"></div>
+                            </div>
+
+                            <div id="preview-education" class="preview-section mb-4" style="display:none;">
+                                <h6 class="section-title">EDUCATION</h6>
+                                <div id="preview-education-list"></div>
+                            </div>
+
+                            <div id="preview-skills" class="preview-section mb-4" style="display:none;">
+                                <h6 class="section-title">SKILLS</h6>
+                                <div id="preview-skills-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-5">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p id="loadingMessage">Processing...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/resume_builder.js') }}"></script>
+{% endblock %}
